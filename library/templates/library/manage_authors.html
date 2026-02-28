@@ -1,0 +1,55 @@
+{% extends "library/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-4">
+                <h4 class="text-success mb-3">Register New Author</h4>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Author Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Biography</label>
+                        <textarea name="bio" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Author Photo</label>
+                        <input type="file" name="author_image" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Add Author</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h2 class="mb-4">Our Authors</h2>
+            <div class="row">
+                {% for author in authors %}
+                <tr>
+                    <td>{{ author.first_name }} {{ author.last_name }}</td>
+                    <td>
+                        <a href="{% url 'author_detail' author.id %}" class="btn btn-info btn-sm">
+                            View Profile
+                        </a> <a href="{% url 'edit_author' author.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <div class="flex-grow-1">
+                    <h5 class="mb-0">{{ author.name }}</h5>
+                    <p class="text-muted small mb-0">{{ author.books.count }} Books Published</p>
+                    <a href="/delete-author/{{ author.id }}/" class="text-danger small text-decoration-none">Remove
+                        Author</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

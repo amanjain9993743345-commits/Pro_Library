@@ -1,0 +1,18 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual Environment (Very Important!)
+venv/
+env/
+.env
+
+# Local Database
+db.sqlite3
+
+# Media files (uploaded user content)
+media/
+
+# IDE settings
+.vscode/
+.idea/

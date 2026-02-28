@@ -1,0 +1,84 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 text-center">
+            {% if book.book_image %}
+            <img src="{{ book.book_image.url }}" class="img-fluid rounded shadow-sm" alt="{{ book.title }}">
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="{% url 'update_book' book.id %}" class="btn btn-outline-success btn-sm me-2">Edit Book</a>
+                <a href="{% url 'manage_books' %}" class="btn btn-outline-secondary btn-sm">Back to List</a>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold">{{ book.title }}</h1>
+            <p class="lead text-muted">by {{ book.author.first_name }} {{ book.author.last_name }}</p>
+            <h3 class="text-success fw-bold mb-3">${{ book.price }}</h3>
+
+            <div class="mb-3">
+                {% for genre in book.genres.all %}
+                <span class="badge bg-primary me-1">{{ genre.name }}</span>
+                {% endfor %}
+            </div>
+
+            <p class="mb-4">{{ book.description }}</p>
+            <p class="text-muted"><strong>Published:</strong> {{ book.published_date }}</p>
+
+            <hr>
+
+            <h4 class="mb-3">Reader Reviews</h4>
+            {% for review in book.reviews.all %}
+            <div class="card mb-2 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title fw-bold">{{ review.reviewer_name }}</h6>
+                    <p class="text-warning mb-1">
+                        {% if review.rating >= 1 %}★{% else %}☆{% endif %}
+                        {% if review.rating >= 2 %}★{% else %}☆{% endif %}
+                        {% if review.rating >= 3 %}★{% else %}☆{% endif %}
+                        {% if review.rating >= 4 %}★{% else %}☆{% endif %}
+                        {% if review.rating >= 5 %}★{% else %}☆{% endif %}
+                    </p>
+                    <p class="card-text">{{ review.content }}</p>
+                    <small class="text-muted">{{ review.created_at|date:"F j, Y" }}</small>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No reviews yet. Be the first!</p>
+            {% endfor %}
+
+            <div class="card mt-4 border-success">
+                <div class="card-body">
+                    <h5 class="text-success">Add a Review</h5>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <input type="text" name="reviewer_name" class="form-control" placeholder="Your Name"
+                                required>
+                        </div>
+                        <div class="mb-2">
+                            <textarea name="content" class="form-control" rows="2" placeholder="Your review..."
+                                required></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <select name="rating" class="form-select" required>
+                                <option value="" disabled selected>Select Rating</option>
+                                <option value="5">★★★★★ (5 Stars)</option>
+                                <option value="4">★★★★☆ (4 Stars)</option>
+                                <option value="3">★★★☆☆ (3 Stars)</option>
+                                <option value="2">★★☆☆☆ (2 Stars)</option>
+                                <option value="1">★☆☆☆☆ (1 Star)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

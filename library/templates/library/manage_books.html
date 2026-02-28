@@ -1,0 +1,207 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="row g-4">
+
+        <div class="col-lg-4 col-md-5">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">Add New Book</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Book Title</label>
+                            <input type="text" name="title" class="form-control" placeholder="Enter title" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Price ($)</label>
+                            <input type="number" step="0.01" name="price" class="form-control" placeholder="0.00"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Author
+                                <button type="button" class="btn btn-sm btn-link text-success p-0 text-decoration-none"
+                                    data-bs-toggle="modal" data-bs-target="#authorModal">+ Add New</button>
+                            </label>
+                            <select name="author" class="form-select" required>
+                                <option value="" selected disabled>Select Author</option>
+                                {% for author in authors %}
+                                <option value="{{ author.id }}">{{ author.first_name }} {{ author.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Full Description</label>
+                            <textarea name="description" class="form-control" rows="3"
+                                placeholder="Summary of the book..." required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-bold">Published Date</label>
+                                <input type="date" name="published_date" class="form-control" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-bold">Cover Image</label>
+                                <input type="file" name="book_image" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Genres
+                                <button type="button" class="btn btn-sm btn-link text-info p-0 text-decoration-none"
+                                    data-bs-toggle="modal" data-bs-target="#genreModal">+ Add New</button>
+                            </label>
+                            <select name="genres" class="form-select" multiple style="height: 100px;">
+                                {% for genre in genres %}
+                                <option value="{{ genre.id }}">{{ genre.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Hold Ctrl (Cmd on Mac) to select multiple</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Publish to Library</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 col-md-7">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-2">
+                    <form method="GET" class="d-flex">
+                        <input type="text" name="search" class="form-control border-0 py-2"
+                            placeholder="Search books by title or author..." value="{{ search_query|default:'' }}">
+                        <button class="btn btn-primary px-4" type="submit">Search</button>
+                        {% if search_query %}
+                        <a href="{% url 'manage_books' %}" class="btn btn-outline-secondary ms-2">Clear</a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+            <h2 class="mb-4 d-flex justify-content-between align-items-center">
+                Book Repository
+                <span class="badge bg-dark rounded-pill fs-6">{{ books.count }} Books</span>
+            </h2>
+
+            <div class="row g-3">
+                {% for book in books %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        {% if book.book_image %}
+                        <img src="{{ book.book_image.url }}" class="card-img-top"
+                            style="height: 250px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-1">{{ book.title }}</h6>
+                            <p class="text-success fw-bold mb-2">${{ book.price }}</p>
+                            <p class="small text-muted mb-3">By {{ book.author.first_name }} {{ book.author.last_name }}
+                            </p>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'update_book' book.id %}"
+                                    class="btn btn-sm btn-outline-success w-100">Edit</a>
+
+                                <button type="button" class="btn btn-sm btn-outline-danger w-100" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal{{ book.id }}">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteModal{{ book.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Deletion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                                Are you sure you want to delete the book **"{{ book.title }}"**?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a href="{% url 'delete_book' book.id %}" class="btn btn-danger">Confirm Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="bg-light p-5 rounded">
+                        <h4 class="text-muted">No books found</h4>
+                        <p>Try a different search or add a new book from the left.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="authorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Add New Author</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'add_author_quick' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Full Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Stephen King" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Short Biography</label>
+                        <textarea name="bio" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Author Photo</label>
+                        <input type="file" name="author_image" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success px-4">Save Author</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="genreModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">New Genre</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'add_genre_quick' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="text" name="genre_name" class="form-control" placeholder="e.g. Mystery" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info text-white w-100">Add Genre</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

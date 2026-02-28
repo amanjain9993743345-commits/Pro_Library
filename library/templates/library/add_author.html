@@ -1,0 +1,38 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 p-4">
+                <h3 class="text-primary mb-4">Add New Author</h3>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Full Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Biography</label>
+                        <textarea name="bio" class="form-control" rows="4" placeholder="Brief author bio..."
+                            required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Author Image</label>
+                        <input type="file" name="author_image" class="form-control">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold">Add Author</button>
+                        <a href="{% url 'manage_books' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

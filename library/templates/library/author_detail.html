@@ -1,0 +1,39 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 text-center">
+            {% if author.author_image %}
+            <img src="{{ author.author_image.url }}" class="rounded-circle shadow"
+                style="width: 200px; height: 200px; object-fit: cover;" alt="{{ author.first_name }}">
+            {% endif %}
+            <h2 class="fw-bold mt-3">{{ author.first_name }} {{ author.last_name }}</h2>
+            <p class="text-muted">{{ author.bio }}</p>
+            <a href="{% url 'author_list' %}" class="btn btn-outline-secondary mt-3">Back to List</a>
+        </div>
+
+        <div class="col-md-8">
+            <h4 class="mb-4">Books by {{ author.first_name }}</h4>
+            <div class="row">
+                {% for book in books %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        {% if book.book_image %}
+                        <img src="{{ book.book_image.url }}" class="card-img-top"
+                            style="height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold">{{ book.title }}</h6>
+                            <a href="{% url 'book_detail' book.id %}" class="btn btn-sm btn-primary">View Book</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No books listed for this author yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">All Authors</h2>
+        <a href="{% url 'manage_books' %}" class="btn btn-outline-primary">Back to Books</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for author in authors %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                {% if author.author_image %}
+                <img src="{{ author.author_image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;"
+                    alt="{{ author.first_name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ author.first_name }} {{ author.last_name }}</h5>
+                    <p class="card-text text-muted small">{{ author.bio|truncatechars:100 }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
+                    <a href="{% url 'author_detail' author.id %}" class="btn btn-sm btn-outline-primary">View
+                        Profile</a> <a href="{% url 'delete_author' author.id %}" class="btn btn-sm btn-outline-danger"
+                        onclick="return confirm('Are you sure you want to delete this author?');">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">
+            <p>No authors added yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
