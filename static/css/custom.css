@@ -1,0 +1,162 @@
+/* Pro Library Custom CSS - BookSite Replica Styles */
+:root {
+    --primary-color: #5D4037;
+    --primary-dark: #3E2723;
+    --secondary-color: #795548;
+    --accent-gold: #D4AF37;
+    --bg-light: #FAF9F6;
+    --bg-card: #FFFFFF;
+    --text-primary: #2C1810;
+    --text-secondary: #5D4037;
+    --border-light: #E0D7C3;
+    --shadow: 0 4px 20px rgba(93, 64, 55, 0.1);
+    --shadow-hover: 0 8px 30px rgba(93, 64, 55, 0.15);
+
+    /* Themes */
+    --dark-bg: #1a1a1a;
+    --dark-text: #f0f0f0;
+    --sepia-bg: #FDF6E3;
+    --sepia-text: #5C4033;
+    --mint-bg: #F0FDF4;
+    --mint-text: #166534;
+    --plum-bg: #F3E8FF;
+    --plum-text: #581C87;
+}
+
+[data-theme="dark"] {
+    --bg-light: var(--dark-bg);
+    --bg-card: #2a2a2a;
+    --text-primary: var(--dark-text);
+    --text-secondary: #b0b0b0;
+    --border-light: #444;
+}
+
+[data-theme="sepia"] {
+    --bg-light: var(--sepia-bg);
+    --bg-card: #fffaf0;
+    --text-primary: var(--sepia-text);
+}
+
+* {
+    font-family: 'Lora', serif;
+}
+
+body {
+    background: var(--bg-light);
+    color: var(--text-primary);
+    line-height: 1.7;
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+    box-shadow: var(--shadow);
+}
+
+.navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: white !important;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+/* Hero */
+.hero {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 120px 0;
+}
+
+/* Book Cover */
+.book-cover {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.book-cover:hover {
+    transform: scale(1.05);
+}
+
+/* Footer */
+.footer {
+    background: var(--primary-dark);
+    color: white;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    cursor: pointer;
+}
+
+.theme-icon {
+    font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero {
+        padding: 80px 0;
+    }
+
+    .card-columns {
+        column-count: 1;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Badges */
+.badge-free {
+    background: var(--accent-gold);
+    color: var(--primary-dark);
+}
+
+/* Complete responsive grid/carousel/hover effects for books/genres */
+.carousel-item img {
+    border-radius: 12px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    filter: invert(1);
+}

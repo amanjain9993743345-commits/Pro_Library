@@ -1,77 +1,340 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Library Management</title>
+    {% block title %}Pro Library{% endblock %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* 1. Fix the Sidebar from overlapping */
-        .sticky-form {
-            position: sticky;
-            top: 20px;
-            z-index: 10;
+        :root {
+            --primary-color: #5D4037;
+            --primary-dark: #3E2723;
+            --secondary-color: #795548;
+            --accent-gold: #D4AF37;
+            --bg-light: #FAF9F6;
+            --bg-card: #FFFFFF;
+            --text-primary: #2C1810;
+            --text-secondary: #5D4037;
+            --border-light: #E0D7C3;
+            --shadow: 0 4px 20px rgba(93, 64, 55, 0.1);
+            --shadow-hover: 0 8px 30px rgba(93, 64, 55, 0.15);
         }
 
-        /* 2. Fix Image Overlap & Scaling */
-        .book-card img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            /* This crops images perfectly so they don't push the layout */
-            border-bottom: 1px solid #eee;
+        * {
+            font-family: 'Lora', serif;
         }
 
-        /* 3. Professional Card Styling */
-        .card {
-            border-radius: 12px;
-            transition: transform 0.2s;
-            border: none;
-        }
-
-        .book-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        /* 4. Layout Spacing */
         body {
-            background-color: #f4f7f6;
-            padding-bottom: 50px;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.7;
         }
 
+
+        /* Navbar */
         .navbar {
-            background: linear-gradient(90deg, #2c3e50, #000000);
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+            box-shadow: var(--shadow);
+            padding: 0.75rem 0;
         }
 
-        /* 5. Fix for the Modal appearing "behind" the page */
-        .modal-backdrop {
-            z-index: 1040 !important;
+        .navbar-brand {
+            font-size: 1.4rem !important;
+            font-weight: 800 !important;
+            color: white !important;
+            text-decoration: none !important;
         }
 
-        .modal {
-            z-index: 1050 !important;
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+        }
+
+
+        /* Primary Buttons */
+        .primary-btn {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .primary-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.4);
+        }
+
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+
+        .bookmark-icon {
+            color: #B8860B;
+            font-size: 1.2em;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-top {
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+
+        /* Hero Sections */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+
+        /* Badge Styles */
+        .badge-free {
+            background: var(--accent-gold);
+            color: var(--primary-dark);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+        }
+
+
+        /* Animations */
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem !important;
+            }
+        }
+
+        .display-3 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent-gold);
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+
+
+    <!-- Main Navbar -->
+    <nav class="navbar navbar-expand-lg py-0">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">📚 PRO LIBRARY</a>
-            <div class="navbar-nav">
-                <a class="nav-link" href="/">Manage Books</a>
-                <a class="nav-link" href="/authors/">Manage Authors</a>
+            <a class="navbar-brand fw-bold logo" href="/">
+                bi-book
+                Pro Library
+            </a>
+
+            <!-- Search Bar -->
+            <form class="d-flex flex-grow-1 mx-lg-3" method="GET" action="{% url 'book_list' %}">
+                <div class="input-group input-group-lg flex-grow-1">
+                    <input type="text" name="search" class="form-control border-0" placeholder="Search books...">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Right Nav -->
+            <div class="navbar-nav ms-auto gap-3">
+                <a class="nav-link" href="{% url 'book_list' %}">
+                    <i class="bi bi-bookshelf me-1"></i>Books
+                </a>
+                <a class="nav-link" href="{% url 'author_list' %}">
+                    <i class="bi bi-person-lines-fill me-1"></i>Authors
+                </a>
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Hi, {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'my_wishlist' %}"><i
+                                    class="bi bi-heart me-2"></i>Favorites</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'user_logout' %}">Sign Out</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <a class="nav-link" href="{% url 'user_login' %}">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                </a>
+                {% endif %}
+                <!-- Theme Toggle - Compact -->
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-light dropdown-toggle theme-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false" title="Theme">
+                        <i class="bi bi-moon-stars-fill"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><button class="dropdown-item theme-btn d-flex align-items-center" data-theme="light"><i
+                                    class="bi bi-sun me-2"></i>Light</button></li>
+                        <li><button class="dropdown-item theme-btn d-flex align-items-center" data-theme="dark"><i
+                                    class="bi bi-moon me-2"></i>Dark</button></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><button class="dropdown-item theme-btn d-flex align-items-center" data-theme="sepia"><i
+                                    class="bi bi-book me-2"></i>Sepia</button></li>
+                        <li><button class="dropdown-item theme-btn d-flex align-items-center" data-theme="mint"><i
+                                    class="bi bi-flower3 me-2"></i>Mint</button></li>
+                        <li><button class="dropdown-item theme-btn d-flex align-items-center" data-theme="plum"><i
+                                    class="bi bi-gem me-2"></i>Plum</button></li>
+                    </ul>
+                </div>
+
+
             </div>
         </div>
     </nav>
 
-    {% block content %}
-    {% endblock %}
+
+    <main class="pb-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-5">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="fw-bold">Pro Library</h5>
+                    <p class="text-muted small">The largest collection of free ebooks. Read on any device, anywhere.</p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Browse</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="{% url 'book_list' %}" class="text-muted text-decoration-none">Books</a></li>
+                        <li><a href="{% url 'author_list' %}" class="text-muted text-decoration-none">Authors</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Genres</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Account</h6>
+                    <ul class="list-unstyled small">
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'my_wishlist' %}" class="text-muted text-decoration-none">Favorites</a></li>
+                        {% else %}
+                        <li><a href="{% url 'user_register' %}" class="text-muted text-decoration-none">Register</a>
+                        </li>
+                        <li><a href="{% url 'user_login' %}" class="text-muted text-decoration-none">Sign In</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <h6 class="fw-bold mb-3">About</h6>
+                    <p class="text-muted small">Built with Django. Hosting 1000s of public domain classics.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-github fs-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    &copy; 2024 Pro Library. All rights reserved.
+                </div>
+                <div class="col-auto">
+                    <small class="text-muted">
+                        <a href="#" class="text-muted text-decoration-none">Privacy</a> •
+                        <a href="#" class="text-muted text-decoration-none">Terms</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/theme-switcher.js' %}"></script>
 </body>
 
 </html>

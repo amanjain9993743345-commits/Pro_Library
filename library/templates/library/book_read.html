@@ -1,0 +1,205 @@
+{% extends "library/base.html" %}
+
+{% block title %}{{ book.title }} - Read Online{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar with Book Info -->
+        <div class="col-lg-3 col-md-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <img src="{% if book.book_image %}{{ book.book_image.url }}{% else %}/static/library/no-image.png{% endif %}"
+                    class="card-img-top" alt="{{ book.title }}" style="height: 300px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ book.title }}</h5>
+                    <p class="text-success fw-bold h6 mb-2">
+                        {% if book.is_public_domain %}
+                        <span class="badge bg-success fs-6">Free Download</span>
+                        {% else %}
+                        ${{ book.price }}
+                        {% endif %}
+                    </p>
+                    <p class="small mb-2"><strong>Author:</strong> {{ book.author }}</p>
+                    <p class="small mb-3"><strong>Published:</strong> {{ book.published_date }}</p>
+
+                    {% if book.genres.exists %}
+                    <div class="mb-3">
+                        {% for genre in book.genres.all %}
+                        <span class="badge bg-light text-dark border me-1">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if book.is_public_domain %}
+                    <div class="d-grid gap-2">
+                        <a href="{{ book.file_content.url }}" class="btn btn-success" download>📥 Download Full Book</a>
+                        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline-primary btn-sm">Book
+                            Details</a>
+                        <a href="{% url 'book_list' %}" class="btn btn-outline-secondary btn-sm">← Back to Books</a>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning small">
+                        <strong>Preview Mode:</strong> Full access requires purchase or login.
+                    </div>
+                    <div class="d-grid gap-1">
+                        <a href="{% url 'book_detail' book.id %}" class="btn btn-primary">Purchase Full Book</a>
+                        <a href="{% url 'book_list' %}" class="btn btn-outline-secondary">← Back to Catalog</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Reader Area -->
+        <div class="col-lg-9 col-md-8">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <h2 class="h4 mb-0 fw-bold text-dark">{{ book.title }}</h2>
+                        <small class="text-muted">{{ book.description|truncatechars:120 }}</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="toggleTheme()">🌙 Dark Mode</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="toggleFontSize()">Aa</button>
+                        <button class="btn btn-outline-success btn-sm" onclick="printBook()">🖨️ Print</button>
+                    </div>
+                </div>
+                <div class="card-body p-0" id="reader-container"
+                    style="height: 70vh; overflow-y: auto; background: #fafafa; padding: 2rem;">
+                    {% if book.file_content %}
+                    {% if book.file_content.name|lower|slice:"-4:" == '.pdf' %}
+                    <!-- PDF Reader (PDF.js would go here) -->
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading PDF...</span>
+                        </div>
+                        <p class="mt-3">PDF reader loading... <br><small>Download for full experience</small></p>
+                        <a href="{{ book.file_content.url }}" class="btn btn-success mt-3" download>Download PDF</a>
+                    </div>
+                    <!-- Note: Full PDF.js integration requires static files setup -->
+                    {% elif book.file_content.name|lower|slice:"-4:" == '.txt' or
+                    book.file_content.name|lower|slice:"-4:" == '.md' %}
+                    <!-- Text Reader -->
+                    <div id="book-content" class="book-text">
+                        <!-- Content loaded via AJAX or server-rendered -->
+                        {% if book.preview_pages %}
+                        <p class="lead text-muted fst-italic mb-4">Preview: First {{ book.preview_pages }} pages</p>
+                        {% endif %}
+                        <div class="prose max-w-none">
+                            <!-- Sample book text; real impl would read file_content -->
+                            <h2>Chapter 1</h2>
+                            </xai:function_call name="edit_file">
+
+                            <xai:function_call name="edit_file">
+                                <parameter name="path">library/templates/library/index.html
+                                    <p class="text-lg leading-relaxed mb-6">It was the best of times, it was the worst
+                                        of times,
+                                        it was the age of wisdom, it was the age of foolishness...</p>
+                                    <p class="text-lg leading-relaxed mb-6">Real implementation would parse and display
+                                        actual
+                                        file_content here. For demo, download full book.</p>
+                                    <div class="bg-warning bg-opacity-25 p-4 rounded mt-6">
+                                        <h5>🔒 Full book available for download</h5>
+                                        <a href="{{ book.file_content.url }}" class="btn btn-success w-100 mb-2"
+                                            download>Download Complete Book</a>
+                                    </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <h4>📄 File Format Preview</h4>
+                        <p class="lead text-muted">Preview available for PDF/TXT. <br><a
+                                href="{{ book.file_content.url }}" class="btn btn-success mt-2" download>Download {{
+                                book.file_content.name|slice:"-4:"|upper }}</a></p>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert alert-warning text-center py-5 m-0">
+                        <h4>⚠️ No file available</h4>
+                        <p class="mb-4">This book doesn't have a digital file uploaded yet.</p>
+                        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline-primary">Book Details</a>
+                        <a href="{% url 'book_list' %}" class="btn btn-secondary">Back to Books</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reader JS -->
+<script>
+    let currentTheme = 'light';
+    let fontSize = 16;
+
+    function toggleTheme() {
+        const container = document.getElementById('reader-container');
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        container.classList.toggle('bg-dark', currentTheme === 'dark');
+        container.classList.toggle('text-light', currentTheme === 'dark');
+        container.classList.toggle('bg-light', currentTheme === 'light');
+        container.classList.toggle('text-dark', currentTheme === 'light');
+    }
+
+    function toggleFontSize() {
+        const content = document.querySelector('.prose');
+        fontSize = fontSize === 16 ? 20 : 16;
+        content.style.fontSize = fontSize + 'px';
+    }
+
+    function printBook() {
+        window.print();
+    }
+
+    // Load real book content if TXT (demo - real app would fetch file_content)
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('book-content')) {
+            // Simulate loading book text
+            setTimeout(() => {
+                // Real implementation: fetch TXT file and render
+            }, 500);
+        }
+    });
+</script>
+
+<style>
+    .prose {
+        line-height: 1.8;
+        font-family: 'Georgia', serif;
+        color: #333;
+    }
+
+    .prose h1,
+    .prose h2,
+    .prose h3 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .prose p {
+        margin-bottom: 1.25rem;
+        text-align: justify;
+    }
+
+    #reader-container {
+        font-size: 16px;
+        scroll-behavior: smooth;
+    }
+
+    @media print {
+
+        .card,
+        .navbar,
+        .sidebar {
+            display: none !important;
+        }
+
+        #reader-container {
+            height: auto;
+            background: white !important;
+            color: black !important;
+        }
+    }
+</style>
+{% endblock %}

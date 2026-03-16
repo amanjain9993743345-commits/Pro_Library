@@ -1,0 +1,70 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-5 fw-bold mb-4">❤️ My Favorites</h1>
+            {% if favorites %}
+            <p class="lead mb-4">Your saved books ({{ favorites.count }}). Toggle heart icon on book pages to manage.
+            </p>
+
+            <div class="row g-4">
+                {% for favorite in favorites %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0 hover-lift">
+                        {% if favorite.book.book_image %}
+                        <img src="{{ favorite.book.book_image.url }}" class="card-img-top"
+                            style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h6 class="fw-bold">{{ favorite.book.title|truncatechars:35 }}</h6>
+                                <small class="text-muted">{{ favorite.added_at|date:"M j" }}</small>
+                            </div>
+                            <p class="small text-muted mb-3">{{ favorite.book.description|truncatechars:50 }}</p>
+                            <div class="d-grid gap-1">
+                                <a href="{% url 'book_detail' favorite.book.id %}" class="btn btn-primary btn-sm">View
+                                    Book</a>
+                                <button onclick="removeFavorite({{ favorite.book.id }})"
+                                    class="btn btn-outline-danger btn-sm">
+                                    Remove from Favorites
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="display-4 text-muted mb-4">💔</div>
+                <h3 class="mb-3">No favorites yet</h3>
+                <p class="lead text-muted mb-4">Click the heart icon on any book to add it to your favorites list.</p>
+                <a href="{% url 'book_list' %}" class="btn btn-primary btn-lg">Browse Books</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function removeFavorite(bookId) {
+        if (confirm('Remove from favorites?')) {
+            fetch(`/favorites/toggle/${bookId}/`, { method: 'POST' })
+                .then(() => location.reload());
+        }
+    }
+</script>
+
+<style>
+    .hover-lift {
+        transition: all 0.2s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+</style>
+{% endblock %}

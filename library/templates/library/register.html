@@ -1,0 +1,107 @@
+{% extends "library/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-xl-5">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="row g-0">
+                    <div
+                        class="col-md-7 bg-gradient-primary text-white d-none d-md-flex flex-column justify-content-center p-5">
+                        <div>
+                            <h2 class="display-5 fw-bold mb-4">Welcome to Pro Library</h2>
+                            <p class="lead mb-4 opacity-90">Join thousands of readers and authors. Create your account
+                                to upload books, save favorites, and access your library anywhere.</p>
+                            <div class="d-flex gap-3">
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-1">📚 Upload Books</h6>
+                                    <small class="opacity-75">Share your stories</small>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">❤️ Favorites</h6>
+                                    <small class="opacity-75">Never lose a book</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 p-5 p-md-4">
+                        <div class="text-center mb-5">
+                            <h3 class="fw-bold mb-2">Create Account</h3>
+                            <p class="text-muted">Join Pro Library today</p>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.username.label_tag }}
+                            <input type="text" name="username" class="form-control form-control-lg rounded-pill px-4"
+                                required maxlength="150" placeholder="Choose username">
+                            <div class="invalid-feedback">
+                                Username must be unique and 150 chars or fewer.
+                            </div>
+
+                            {{ form.password1.label_tag }}
+                            <input type="password" name="password1"
+                                class="form-control form-control-lg rounded-pill px-4" required minlength="8"
+                                placeholder="Password">
+                            <div class="invalid-feedback">
+                                Password must be 8+ chars with uppercase, lowercase, number.
+                            </div>
+
+                            {{ form.password2.label_tag }}
+                            <input type="password" name="password2"
+                                class="form-control form-control-lg rounded-pill px-4" required minlength="8"
+                                placeholder="Confirm Password">
+                            <div class="invalid-feedback">
+                                Passwords don't match.
+                            </div>
+
+                            {% if form.errors %}
+                            <div class="alert alert-danger mt-3">
+                                {{ form.errors }}
+                            </div>
+                            {% endif %}
+
+                            <button type="submit"
+                                class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold mt-4 mb-3">
+                                Create My Account
+                            </button>
+                        </form>
+
+                        <div class="text-center">
+                            <p class="text-muted mb-0">Already have an account? <a href="{% url 'user_login' %}"
+                                    class="fw-bold text-primary text-decoration-none">Sign In</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Client-side validation preview
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const password1 = document.querySelector('input[name="password1"]').value;
+        const password2 = document.querySelector('input[name="password2"]').value;
+
+        if (password1 !== password2) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+        }
+    });
+</script>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .rounded-pill {
+        border-radius: 50px !important;
+    }
+
+    .card {
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}

@@ -8,16 +8,60 @@
             <img src="{{ book.book_image.url }}" class="img-fluid rounded shadow-sm" alt="{{ book.title }}">
             {% endif %}
 
-            <div class="mt-4">
-                <a href="{% url 'update_book' book.id %}" class="btn btn-outline-success btn-sm me-2">Edit Book</a>
-                <a href="{% url 'manage_books' %}" class="btn btn-outline-secondary btn-sm">Back to List</a>
+            <!-- Action Buttons -->
+            <div class="mt-4 d-grid gap-2">
+                {% if book.is_public_domain %}
+                <a href="{% url 'book_read' book.id %}" class="btn btn-success btn-lg">
+                    <i class="bi bi-play-circle me-2"></i>Read Online Free
+                </a>
+                <a href="{{ book.file_content.url }}" class="btn btn-outline-success btn-lg" download>
+                    <i class="bi bi-download me-2"></i>Download Full Book
+                </a>
+                {% else %}
+                <a href="{% url 'book_read' book.id %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-eye me-2"></i>Preview Book
+                </a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <button class="btn btn-outline-primary position-relative" onclick="toggleFavorite({{ book.id }})">
+                    <i class="bi bi-heart{% if is_favorited %} bi-heart-fill text-danger{% endif %} me-2"></i>
+                    {% if is_favorited %}Remove from Favorites{% else %}Add to Favorites{% endif %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        id="fav-count-{{ book.id }}">
+                        {{ book.favorites.count }}
+                    </span>
+                </button>
+                {% endif %}
+                <a href="{% url 'book_list' %}" class="btn btn-outline-secondary btn-lg">← Back to Catalog</a>
+            </div>
+
+            <!-- Quick Info Cards -->
+            <div class="row mt-4 g-3">
+                <div class="col-6">
+                    <div class="card border-0 bg-light h-100">
+                        <div class="card-body text-center p-3">
+                            <i class="bi bi-calendar3 fs-1 text-muted mb-2"></i>
+                            <h6 class="fw-bold">{{ book.published_date|date:"Y" }}</h6>
+                            <small class="text-muted">Published</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card border-0 bg-light h-100">
+                        <div class="card-body text-center p-3">
+                            <i class="bi bi-people fs-1 text-muted mb-2"></i>
+                            <h6 class="fw-bold">{{ book.reviews.count }}</h6>
+                            <small class="text-muted">Reviews</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="col-md-8">
             <h1 class="display-5 fw-bold">{{ book.title }}</h1>
             <p class="lead text-muted">by {{ book.author.first_name }} {{ book.author.last_name }}</p>
-            <h3 class="text-success fw-bold mb-3">${{ book.price }}</h3>
+            <h3 class="text-success fw-bold mb-3">₹{{ book.price|floatformat:0 }}</h3>
 
             <div class="mb-3">
                 {% for genre in book.genres.all %}
@@ -26,7 +70,22 @@
             </div>
 
             <p class="mb-4">{{ book.description }}</p>
-            <p class="text-muted"><strong>Published:</strong> {{ book.published_date }}</p>
+            <!-- Quick Info -->
+            <div class="row mb-4 g-3">
+                <div class="col-auto">
+                    <span class="badge bg-info"><i class="bi bi-calendar me-1"></i>{{ book.published_date|date:"M Y"
+                        }}</span>
+                </div>
+                <div class="col-auto">
+                    <span class="badge bg-warning"><i class="bi bi-eye me-1"></i>{{ book.preview_pages }} Preview
+                        Pages</span>
+                </div>
+                {% if book.is_public_domain %}
+                <div class="col-auto">
+                    <span class="badge bg-success"><i class="bi bi-unlock me-1"></i>Public Domain</span>
+                </div>
+                {% endif %}
+            </div>
 
             <hr>
 
